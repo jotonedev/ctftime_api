@@ -1,5 +1,9 @@
 # ctftime_api
 
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ctftime_api?link=https%3A%2F%2Fpypi.org%2Fproject%2Fctftime_api%2F)
+![PyPI - Status](https://img.shields.io/pypi/status/ctftime_api?link=https%3A%2F%2Fpypi.org%2Fproject%2Fctftime_api%2F)
+![PyPI - Version](https://img.shields.io/pypi/v/ctftime_api?link=https%3A%2F%2Fpypi.org%2Fproject%2Fctftime_api%2F)
+
 A simple Python wrapper for the CTFTime API that provides an asynchronous interface to retrieve CTF event and team information.
 
 ## Features
@@ -14,10 +18,12 @@ A simple Python wrapper for the CTFTime API that provides an asynchronous interf
 Install via Poetry:
 
 ```sh
+git clone https://github.com/jotonedev/ctftime_api
+cd ctftime_api
 poetry install
 ```
 
-Or via pip:
+Or via pip (recommended):
 
 ```sh
 pip install ctftime_api
