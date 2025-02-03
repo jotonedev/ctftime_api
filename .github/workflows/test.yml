@@ -31,7 +31,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           poetry-version: "2.0.1"
-          install-args: --with test
+          install-args: --with dev
 
       - name: Lint with ruff
         if: matrix.python-version == '3.12'
