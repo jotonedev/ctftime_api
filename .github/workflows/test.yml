@@ -1,0 +1,59 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.11", "3.12", "3.13" ]
+
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup and Cache Python Poetry
+        uses: packetcoders/action-setup-cache-python-poetry@v1.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          poetry-version: "2.0.1"
+          install-args: --with test
+
+      - name: Lint with ruff
+        if: matrix.python-version == '3.12'
+        run: |
+          ruff check -v
+
+      - name: Test code
+        if: matrix.python-version != '3.12'
+        run: poetry run pytest
+
+      - name: Test code with coverage
+        if: matrix.python-version == '3.12'
+        run: poetry run coverage run -m pytest && poetry run coverage report -m && poetry run coverage xml
+        continue-on-error: true
+
+      - name: Upload coverage for pull requests
+        if: matrix.python-version == '3.12' && github.event_name == 'pull_request'
+        uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: ./coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check types
+        if: matrix.python-version == '3.11'
+        run: poetry run mypy -p ctftime_api

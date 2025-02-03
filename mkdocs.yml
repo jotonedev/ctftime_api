@@ -1,0 +1,146 @@
+site_name: ctftime_api documentation
+repo_name: ctftime_api
+site_url: https://jotonedev.github.io/ctftime_api
+site_description: >
+  A simple Python wrapper for the CTFTime API.
+repo_url: https://github.com/jotonedev/ctftime_api
+edit_uri: edit/main/docs/
+
+docs_dir: docs
+site_dir: site
+strict: true
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+
+theme:
+  name: material
+  font: false
+  palette:
+    - media: "(prefers-color-scheme)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+  features:
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+
+    - navigation.tabs
+    - navigation.tabs.sticky
+
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+
+    - navigation.path
+    - navigation.top
+    - navigation.tracking
+
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+copyright: >
+  Copyright &copy; 2025 John Toniutti
+
+watch:
+  - ctftime_api
+
+plugins:
+  social:
+  privacy:
+  search:
+  mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        import:
+          - url: https://docs.python.org/3/objects.inv
+            domains: [ py, std ]
+        options:
+          extensions:
+            - griffe_inherited_docstrings
+            - griffe_pydantic:
+                schema: false
+          members_order: source
+          separate_signature: true
+          filters: [ "!^_" ]
+          canonical_version: "latest"
+          docstring_options:
+            ignore_init_summary: true
+          merge_init_into_class: true
+          inherit_docstrings: true
+          inherited_members: true
+          show_source: false
+          unwrap_annotated: true
+          show_symbol_type_toc: true
+          show_root_heading: true
+          show_root_full_path: true
+          show_inheritance_diagram: false
+          show_signature_annotations: true
+          show_symbol_type_heading: true
+          signature_crossrefs: true
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      title: Page contents
+      toc_depth: 3
+
+  # Python markdown extensions
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.extra
+  - pymdownx.highlight:
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+extra:
+  generator: false
+  manifest: site.webmanifest
+  social:
+    - icon: fontawesome/solid/globe
+      link: https://jotone.it
+    - icon: fontawesome/brands/github
+      link: https://github.com/jotonedev
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/john-toniutti/
+
+extra_css:
+  - 'stylesheets/fonts.css'
+
+nav:
+  - Home: index.md
+  - API Reference:
+      - Client: api/client.md
+      - Models:
+          - Event: api/models/event.md
+          - Duration: api/models/duration.md
+          - Rating: api/models/rating.md
+          - Team: api/models/team.md
