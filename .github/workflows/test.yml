@@ -36,7 +36,7 @@ jobs:
       - name: Lint with ruff
         if: matrix.python-version == '3.12'
         run: |
-          ruff check -v
+          poetry run ruff check -v
 
       - name: Test code
         if: matrix.python-version != '3.12'
