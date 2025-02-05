@@ -143,3 +143,4 @@ nav:
           - Duration: api/models/duration.md
           - Rating: api/models/rating.md
           - Team: api/models/team.md
+          - Vote: api/models/vote.md

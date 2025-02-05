@@ -5,6 +5,7 @@ import httpx
 from ctftime_api.client import CTFTimeClient
 from ctftime_api.models.team import TeamRank, Team, TeamComplete
 from ctftime_api.models.event import Event, EventResult
+from ctftime_api.models.vote import Vote
 
 
 def get_client(response) -> CTFTimeClient:
@@ -225,3 +226,29 @@ class TestCTFTimeClient(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(results[101], EventResult)
         self.assertEqual(results[101].title, "Event Results")
         await client.close()
+
+    async def test_get_votes_per_year(self):
+        mock_response = [
+            {
+                "event_id": 2467,
+                "user_id": 68035,
+                "user_teams": [369827, 225509, 109611],
+                "weight": "25.00",
+                "creation_date": 1737916238,
+            },
+            {
+                "event_id": 2467,
+                "user_id": 204301,
+                "user_teams": [351259],
+                "weight": "25.00",
+                "creation_date": 1737916305,
+            },
+        ]
+        client = get_client(mock_response)
+        votes = await client.get_votes_per_year(2025)
+        self.assertIsInstance(votes, list)
+        self.assertTrue(all(isinstance(v, Vote) for v in votes))
+        self.assertEqual(len(votes), 2)
+        self.assertEqual(votes[0].event_id, 2467)
+        self.assertEqual(votes[0].user_id, 68035)
+        self.assertEqual(votes[0].weight, "25.00")

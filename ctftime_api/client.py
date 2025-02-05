@@ -1,10 +1,11 @@
 from datetime import datetime
 
 import httpx
-from httpx import URL
+from httpx import URL, Timeout
 
 from pydantic_extra_types.country import CountryAlpha2
 
+from ctftime_api.models.vote import Vote
 from ctftime_api.models.event import Event, EventResult
 from ctftime_api.models.team import TeamRank, Team, TeamComplete
 
@@ -176,3 +177,28 @@ class CTFTimeClient:
             int(ctf_id): EventResult(**result, ctf_id=ctf_id)
             for ctf_id, result in event.items()
         }
+
+    async def get_votes_per_year(
+        self, year: int | None, timeout: Timeout | int | float | None = None
+    ) -> list[Vote]:
+        """
+        Get the votes for a specific year.
+        This API call may take a long time to complete.
+        :param year: The year to get the votes for or None for the current year.
+        :param timeout: The timeout for the request.
+            If None, the session timeout will be used.
+        :return: A list of votes.
+        """
+        if year is None:
+            year = datetime.now().year
+
+        if timeout is None:
+            timeout = self._client.timeout
+
+        url = self._base_url.join(f"votes/{year}/")
+        response = await self._client.get(url, timeout=timeout)
+        response.raise_for_status()
+
+        votes = response.json()
+
+        return [Vote(**vote) for vote in votes]
