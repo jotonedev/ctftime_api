@@ -1,13 +1,13 @@
 [project]
 name = "ctftime_api"
-version = "0.1.1"
+version = "0.1.2"
 description = "CTFTime API wrapper"
 authors = [
     {name = "John Toniutti",email = "john.toniutti@gmail.com"}
 ]
 keywords = ["ctftime", "api", "wrapper"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Framework :: Pydantic",

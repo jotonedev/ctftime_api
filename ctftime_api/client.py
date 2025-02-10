@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import httpx
 from httpx import URL, Timeout
@@ -8,7 +9,6 @@ from pydantic_extra_types.country import CountryAlpha2
 from ctftime_api.models.vote import Vote
 from ctftime_api.models.event import Event, EventResult
 from ctftime_api.models.team import TeamRank, Team, TeamComplete
-
 
 __all__ = ["CTFTimeClient"]
 
@@ -27,6 +27,18 @@ class CTFTimeClient:
             self._client = httpx.AsyncClient(*args, **kwargs)
         self._base_url = URL("https://ctftime.org/api/v1/")
 
+    async def _get(self, url: str | URL, **kwargs) -> Any:
+        """
+        Perform a GET request.
+        :param url: The url to make the request to.
+        :param kwargs: Additional arguments to pass to the request.
+        :return: The response JSON.
+        :raise httpx.HTTPStatusError: If the response status code is not successful.
+        """
+        response = await self._client.get(url, **kwargs)
+        response.raise_for_status()
+        return response.json()
+
     async def close(self):
         """Close the underlying httpx.AsyncClient."""
         await self._client.aclose()
@@ -39,16 +51,16 @@ class CTFTimeClient:
         :param year: The year to get the top teams for. If None, the current year will be used.
         :param limit: The number of teams to get.
         :return: A list of the top teams.
+        :raise httpx.HTTPStatusError: If the response status code is not successful.
         """
         if year is None:
             url = self._base_url.join("top/")
             year = datetime.now().year
         else:
             url = self._base_url.join(f"top/{year}/")
-        response = await self._client.get(url, params={"limit": limit})
-        response.raise_for_status()
 
-        teams = response.json().get(f"{year}", [])
+        response: dict[str, list[dict]] = await self._get(url, params={"limit": limit})
+        teams = response.get(f"{year}", [])
 
         return [TeamRank.model_validate(team) for team in teams]
 
@@ -60,6 +72,8 @@ class CTFTimeClient:
         :param country: The country to get the top teams for.
             It can be a pycountry Country object or a two-letter country code.
         :return: A list of the top teams.
+        :raise httpx.HTTPStatusError: If the response status code is not successful.
+        :raise ValueError: If the country is not a two-letter country code or a pycountry Country object.
         """
         if isinstance(country, CountryAlpha2):
             country = country
@@ -70,10 +84,7 @@ class CTFTimeClient:
                 )
 
         url = self._base_url.join("top-by-country/").join(f"{country}/")
-        response = await self._client.get(url)
-        response.raise_for_status()
-
-        teams = response.json()
+        teams: list[dict[str, Any]] = await self._get(url)
 
         return [TeamRank.model_validate(team) for team in teams]
 
@@ -88,6 +99,8 @@ class CTFTimeClient:
             It can be a Unix timestamp or a datetime object.
         :param limit: The number of events to get.
         :return: A list of events.
+        :raise httpx.HTTPStatusError: If the response status code is not successful.
+        :raise ValueError: If the start date is after the end date.
         """
         if isinstance(start, datetime):
             start = int(start.timestamp())
@@ -98,12 +111,9 @@ class CTFTimeClient:
             raise ValueError("The start date must be before the end date.")
 
         url = self._base_url.join("events/")
-        response = await self._client.get(
+        events: list[dict[str, Any]] = await self._get(
             url, params={"start": start, "finish": end, "limit": limit}
         )
-        response.raise_for_status()
-
-        events = response.json()
 
         return [Event.model_validate(event) for event in events]
 
@@ -112,12 +122,10 @@ class CTFTimeClient:
         Get information about a specific event.
         :param event_id: The ID of the event.
         :return: The event information.
+        :raise httpx.HTTPStatusError: If the response status code is not successful.
         """
         url = self._base_url.join(f"events/{event_id}/")
-        response = await self._client.get(url)
-        response.raise_for_status()
-
-        event = response.json()
+        event: dict[str, Any] = await self._get(url)
 
         return Event.model_validate(event)
 
@@ -129,14 +137,14 @@ class CTFTimeClient:
         :param limit: The number of teams to get.
         :param offset: The offset to start from.
         :return: A list of teams.
+        :raise httpx.HTTPStatusError: If the response status code is not successful.
         """
         url = self._base_url.join("teams/")
-        response = await self._client.get(
+
+        response: dict[str, Any] = await self._get(
             url, params={"limit": limit, "offset": offset}
         )
-        response.raise_for_status()
-
-        teams = response.json().get("results", [])
+        teams: list[dict[str, Any]] = response.get("results", [])
 
         return [Team.model_validate(team) for team in teams]
 
@@ -145,12 +153,10 @@ class CTFTimeClient:
         Get information about a specific team.
         :param team_id: The ID of the team.
         :return: The team information.
+        :raise httpx.HTTPStatusError: If the response status code is not successful.
         """
         url = self._base_url.join(f"teams/{team_id}/")
-        response = await self._client.get(url)
-        response.raise_for_status()
-
-        team = response.json()
+        team: dict[str, Any] = await self._get(url)
 
         return TeamComplete.model_validate(team)
 
@@ -162,19 +168,17 @@ class CTFTimeClient:
         :param year: The year to get the results for.
             If None, the current year will be used.
         :return: A dictionary of event results.
+        :raise httpx.HTTPStatusError: If the response status code is not successful.
         """
         if year is None:
             url = self._base_url.join("results/")
         else:
             url = self._base_url.join(f"results/{year}/")
 
-        response = await self._client.get(url)
-        response.raise_for_status()
-
-        event = response.json()
+        event: dict[str, dict] = await self._get(url)
 
         return {
-            int(ctf_id): EventResult(**result, ctf_id=ctf_id)
+            int(ctf_id): EventResult(**result, ctf_id=int(ctf_id))
             for ctf_id, result in event.items()
         }
 
@@ -188,6 +192,7 @@ class CTFTimeClient:
         :param timeout: The timeout for the request.
             If None, the session timeout will be used.
         :return: A list of votes.
+        :raise httpx.HTTPStatusError: If the response status code is not successful.
         """
         if year is None:
             year = datetime.now().year
@@ -196,9 +201,6 @@ class CTFTimeClient:
             timeout = self._client.timeout
 
         url = self._base_url.join(f"votes/{year}/")
-        response = await self._client.get(url, timeout=timeout)
-        response.raise_for_status()
-
-        votes = response.json()
+        votes: list[dict] = await self._get(url, timeout=timeout)
 
         return [Vote(**vote) for vote in votes]
