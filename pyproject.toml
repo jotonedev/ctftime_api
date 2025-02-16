@@ -1,6 +1,6 @@
 [project]
 name = "ctftime_api"
-version = "0.1.2"
+version = "0.1.3"
 description = "CTFTime API wrapper"
 authors = [
     {name = "John Toniutti",email = "john.toniutti@gmail.com"}
@@ -27,6 +27,15 @@ dependencies = [
     "pydantic (>=2.10.6,<3.0.0)",
     "pydantic-extra-types (>=2.10.2,<3.0.0)",
     "pycountry (>=24.6.1,<25.0.0)",
+]
+
+[project.optional-dependencies]
+speed = [
+    "uvloop (>=0.21.0,<1.0.0) ; sys_platform != 'win32'",
+    "brotli (>=1.1.0,<2.0.0) ; platform_python_implementation == 'CPython' ",
+    "brotlicffi (>=1.1.0.0,<2.0.0.0) ; platform_python_implementation != 'CPython' ",
+    "h2 (>=4.2.0,<5.0.0)",
+    "zstandard (>=0.23.0,<0.24.0)",
 ]
 
 [project.urls]
