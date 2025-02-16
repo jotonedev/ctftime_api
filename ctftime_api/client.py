@@ -1,30 +1,33 @@
+import importlib.util
 from datetime import datetime
 from typing import Any
 
 import httpx
 from httpx import URL, Timeout
-
 from pydantic_extra_types.country import CountryAlpha2
 
-from ctftime_api.models.vote import Vote
 from ctftime_api.models.event import Event, EventResult
 from ctftime_api.models.team import TeamRank, Team, TeamComplete
+from ctftime_api.models.vote import Vote
 
 __all__ = ["CTFTimeClient"]
 
+h2 = importlib.util.find_spec("httpcore.h2")
+
 
 class CTFTimeClient:
-    def __init__(self, client: httpx.AsyncClient | None = None, *args, **kwargs):
+    def __init__(self, client: httpx.AsyncClient | None = None, **kwargs):
         """
         Initialize the CTFTime API client.
         :param client: The httpx.AsyncClient to use. If None, a new client will be created.
-        :param args: Args that will be passed to the httpx.AsyncClient constructor.
         :param kwargs: Kwargs that will be passed to the httpx.AsyncClient constructor.
         """
         if client is not None:
             self._client = client
         else:
-            self._client = httpx.AsyncClient(*args, **kwargs)
+            if h2 is not None:
+                kwargs.setdefault("http2", True)
+            self._client = httpx.AsyncClient(**kwargs)
         self._base_url = URL("https://ctftime.org/api/v1/")
 
     async def _get(self, url: str | URL, **kwargs) -> Any:
