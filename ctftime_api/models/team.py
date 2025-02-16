@@ -5,7 +5,6 @@ from pydantic_extra_types.country import CountryAlpha2
 
 from .rating import Rating
 
-
 __all__ = ["BaseTeam", "Team", "TeamRank", "TeamComplete", "TeamResult"]
 
 
