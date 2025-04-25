@@ -44,7 +44,7 @@ jobs:
         run: uv run mkdocs build
 
       - name: Upload docs
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: ${{ (github.event.inputs.upload || github.ref_type == 'tag') }}
         id: deployment
         uses: actions/upload-pages-artifact@v3
         with:
