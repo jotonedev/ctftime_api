@@ -61,3 +61,7 @@ This project is licensed under the GNU General Public License v3 or later (GPLv3
 
 - [Project Documentation Website](https://jotonedev.github.io/ctftime_api)
 - [GitHub Repository](https://github.com/jotonedev/ctftime_api)
+
+## License
+
+This project is released under the [GPL 3.0 or later](LICENSE) license.

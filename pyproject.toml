@@ -10,6 +10,7 @@ keywords = [
     "api",
     "wrapper",
 ]
+license = "GPL-3.0-or-later"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
