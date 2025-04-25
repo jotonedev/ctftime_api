@@ -33,7 +33,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install the project
-        run: uv sync --all-extras --group dev
+        run: uv sync --all-extras --group dev --no-group docs
 
       - name: Lint with ruff
         if: matrix.python-version == '3.13'
