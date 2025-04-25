@@ -36,17 +36,21 @@ jobs:
         run: uv sync --all-extras --group dev --no-group docs
 
       - name: Lint with ruff
+        id: lint
         if: matrix.python-version == '3.13'
         run: uv run ruff check -v
 
       - name: Check formatting with ruff
+        id: check
         if: matrix.python-version == '3.13'
         run: uv run ruff format --check
 
       - name: Test code
+        id: test
         run: uv run pytest
 
       - name: Test code with coverage
+        id: coverage
         if: matrix.python-version == '3.13'
         run: uv run coverage run -m pytest && uv run coverage report -m && uv run coverage xml
         continue-on-error: true
@@ -59,5 +63,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check types
-        if: matrix.python-version == '3.11'
+        id: typing
         run: uv run mypy -p ctftime_api

@@ -37,7 +37,7 @@ jobs:
           version: "latest"
 
       - name: Install the project
-        run: uv sync --all-extras
+        run: uv sync --no-group docs --no-group dev
 
       - name: Package project
         run: uv build -o dist/
