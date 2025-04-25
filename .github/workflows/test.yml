@@ -37,19 +37,18 @@ jobs:
 
       - name: Lint with ruff
         if: matrix.python-version == '3.13'
-        run: |
-          ruff check -v
+        run: uv run ruff check -v
 
       - name: Check formatting with ruff
         if: matrix.python-version == '3.13'
-        run: ruff format --check
+        run: uv run ruff format --check
 
       - name: Test code
-        run: pytest
+        run: uv run pytest
 
       - name: Test code with coverage
         if: matrix.python-version == '3.13'
-        run: coverage run -m pytest && coverage report -m && coverage xml
+        run: uv run coverage run -m pytest && uv run coverage report -m && uv run coverage xml
         continue-on-error: true
 
       - name: Upload coverage for pull requests
@@ -61,4 +60,4 @@ jobs:
 
       - name: Check types
         if: matrix.python-version == '3.11'
-        run: mypy -p ctftime_api
+        run: uv run mypy -p ctftime_api
