@@ -8,22 +8,14 @@ A simple Python wrapper for the CTFTime API that provides an asynchronous interf
 
 ## Features
 
-- **Asynchronous:** Utilize Python's async/await for non-blocking API requests.
-- **Type Safe:** Fully type annotated using Pydantic models.
-- **Modular:** Organized into client and models modules for easy maintenance and extension.
-- **Tested:** Includes comprehensive unit tests in the [tests](tests/) directory.
+- **Asynchronous**: Utilize Python's async/await for non-blocking API requests.
+- **Type Safe**: Fully type annotated using Pydantic models.
+- **Modular**: Organized into client and models modules for easy maintenance and extension.
+- **Tested**: Includes comprehensive unit tests in the [tests](tests/) directory.
 
 ## Installation
 
-Install via Poetry:
-
-```sh
-git clone https://github.com/jotonedev/ctftime_api
-cd ctftime_api
-poetry install
-```
-
-Or via pip (recommended):
+Install via pip:
 
 ```sh
 pip install ctftime_api
