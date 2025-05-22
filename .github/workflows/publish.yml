@@ -39,15 +39,23 @@ jobs:
       - name: Install the project
         run: uv sync --no-group docs --no-group dev
 
+      - name: Test code
+        id: test
+        run: uv run pytest
+
       - name: Package project
+        id: build
         run: uv build -o dist/
 
       - name: Sign build artifacts
+        id: sign
+        if: ${{ (github.event.inputs.upload || github.ref_type == 'tag') }}
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: "dist/*"
 
       - name: Upload build artifacts
+        id: upload
         uses: actions/upload-artifact@v4
         with:
           name: release-dists
@@ -62,7 +70,6 @@ jobs:
     if: ${{ (github.event.inputs.upload || github.ref_type == 'tag') }}
 
     permissions:
-      contents: read
       id-token: write
 
     environment:
@@ -70,12 +77,14 @@ jobs:
 
     steps:
       - name: Retrieve release distributions
+        id: download
         uses: actions/download-artifact@v4
         with:
           name: release-dists
           path: dist/
 
       - name: Publish package distributions to PyPI
+        id: publish
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           attestations: true
