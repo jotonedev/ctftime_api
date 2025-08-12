@@ -1,6 +1,6 @@
 [project]
 name = "ctftime_api"
-version = "0.1.5"
+version = "0.1.6"
 description = "CTFTime API wrapper"
 authors = [{ name = "John Toniutti", email = "john.toniutti@gmail.com" }]
 requires-python = ">=3.11"
