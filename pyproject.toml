@@ -37,7 +37,7 @@ speed = [
     "brotli (>=1.1.0,<2.0.0) ; platform_python_implementation == 'CPython' ",
     "brotlicffi (>=1.1.0.0,<2.0.0.0) ; platform_python_implementation != 'CPython' ",
     "h2 (>=4.2.0,<5.0.0)",
-    "zstandard (>=0.23.0,<0.24.0)",
+    "zstandard (>=0.23.0,<0.25.0)",
 ]
 
 [project.urls]
@@ -49,7 +49,7 @@ dev = [
     "ruff~=0.9",
     "pytest~=8.3",
     "pytest-cov~=6.1",
-    "pytest-asyncio~=0.24",
+    "pytest-asyncio>=0.24,<2.0",
     "mypy~=1.11",
 ]
 docs = [
