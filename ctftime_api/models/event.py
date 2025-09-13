@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from dataclasses_json import Undefined, dataclass_json
+from dataclasses_json import DataClassJsonMixin, Undefined, dataclass_json
 from yarl import URL
 
 from .duration import Duration
@@ -12,7 +12,7 @@ __all__ = ["Event", "EventResult"]
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass(frozen=True)
-class Event:
+class Event(DataClassJsonMixin):
     """Represents a CTF event."""
 
     organizers: list[BaseTeam]
@@ -43,7 +43,7 @@ class Event:
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass(frozen=True)
-class EventResult:
+class EventResult(DataClassJsonMixin):
     """Represents a CTF event result."""
 
     title: str

@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from dataclasses_json import Undefined, config, dataclass_json
+from dataclasses_json import DataClassJsonMixin, Undefined, config, dataclass_json
 from yarl import URL
 
 from .country import CountryCode
@@ -11,7 +11,7 @@ __all__ = ["BaseTeam", "Team", "TeamRank", "TeamComplete", "TeamResult"]
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass(frozen=True)
-class BaseTeam:
+class BaseTeam(DataClassJsonMixin):
     """Represents a CTF team. Contains only the minimal information."""
 
     team_id: int = field(metadata=config(field_name="id"))
@@ -41,7 +41,7 @@ class TeamRank(BaseTeam):
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass(frozen=True)
-class TeamResult:
+class TeamResult(DataClassJsonMixin):
     """Represents a CTF team result"""
 
     team_id: int
