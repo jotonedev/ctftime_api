@@ -1,11 +1,14 @@
+from dataclasses import dataclass
 from datetime import datetime
 
-from pydantic import BaseModel
+from dataclasses_json import Undefined, dataclass_json
 
 __all__ = ["Vote"]
 
 
-class Vote(BaseModel):
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass(frozen=True)
+class Vote:
     event_id: int
     user_id: int
     user_teams: list[int]  # list of team IDs

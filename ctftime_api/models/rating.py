@@ -1,9 +1,13 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
+
+from dataclasses_json import Undefined, dataclass_json
 
 __all__ = ["Rating"]
 
 
-class Rating(BaseModel):
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass(frozen=True)
+class Rating:
     """Represents a CTF team rating."""
 
     rating_place: int | None = None
