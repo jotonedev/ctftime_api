@@ -37,8 +37,10 @@ class Event(DataClassJsonMixin):
     finish: datetime | str
 
     def __post_init__(self):
-        object.__setattr__(self, "start", datetime.fromisoformat(self.start))
-        object.__setattr__(self, "finish", datetime.fromisoformat(self.finish))
+        if isinstance(self.start, str):
+            object.__setattr__(self, "start", datetime.fromisoformat(self.start))
+        if isinstance(self.finish, str):
+            object.__setattr__(self, "finish", datetime.fromisoformat(self.finish))
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
