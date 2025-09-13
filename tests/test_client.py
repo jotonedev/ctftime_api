@@ -1,10 +1,11 @@
 import unittest
 from datetime import datetime
+
 import httpx
 
 from ctftime_api.client import CTFTimeClient
-from ctftime_api.models.team import TeamRank, Team, TeamComplete
 from ctftime_api.models.event import Event, EventResult
+from ctftime_api.models.team import Team, TeamComplete, TeamRank
 from ctftime_api.models.vote import Vote
 
 
@@ -34,10 +35,10 @@ class TestCTFTimeClient(unittest.IsolatedAsyncioTestCase):
         teams = await client.get_top_teams_per_year()
         self.assertIsInstance(teams, list)
         self.assertTrue(all(isinstance(t, TeamRank) for t in teams))
-        self.assertEqual(teams[0].id, 3329)
-        self.assertEqual(teams[0].name, "Dragon Sector")
-        self.assertEqual(teams[1].id, 284)
-        self.assertEqual(teams[1].name, "Plaid Parliament of Pwning")
+        self.assertEqual(teams[0].team_id, 3329)
+        self.assertEqual(teams[0].team_name, "Dragon Sector")
+        self.assertEqual(teams[1].team_id, 284)
+        self.assertEqual(teams[1].team_name, "Plaid Parliament of Pwning")
         await client.close()
 
     async def test_get_top_team_by_country(self):
@@ -64,10 +65,10 @@ class TestCTFTimeClient(unittest.IsolatedAsyncioTestCase):
         client = get_client(mock_response)
         teams = await client.get_top_team_by_country("US")
         self.assertIsInstance(teams, list)
-        self.assertEqual(teams[0].id, 210132)
-        self.assertEqual(teams[0].name, "Drovosec")
-        self.assertEqual(teams[1].id, 273508)
-        self.assertEqual(teams[1].name, "CYBERSQD")
+        self.assertEqual(teams[0].team_id, 210132)
+        self.assertEqual(teams[0].team_name, "Drovosec")
+        self.assertEqual(teams[1].team_id, 273508)
+        self.assertEqual(teams[1].team_name, "CYBERSQD")
         await client.close()
 
     async def test_get_event_information(self):
@@ -132,8 +133,8 @@ class TestCTFTimeClient(unittest.IsolatedAsyncioTestCase):
         client = get_client(mock_response)
         team = await client.get_team_information(1005)
         self.assertIsInstance(team, TeamComplete)
-        self.assertEqual(team.id, 1005)
-        self.assertEqual(team.name, "More Smoked Leet Chicken")
+        self.assertEqual(team.team_id, 1005)
+        self.assertEqual(team.team_name, "More Smoked Leet Chicken")
         self.assertEqual(team.primary_alias, "More Smoked Leet Chicken")
         await client.close()
 
@@ -162,10 +163,10 @@ class TestCTFTimeClient(unittest.IsolatedAsyncioTestCase):
         teams = await client.get_teams_information(limit=2, offset=0)
         self.assertEqual(len(teams), 2)
         self.assertTrue(all(isinstance(t, Team) for t in teams))
-        self.assertEqual(teams[0].id, 1)
-        self.assertEqual(teams[0].name, "MiT")
-        self.assertEqual(teams[1].id, 2)
-        self.assertEqual(teams[1].name, "Smoked Chicken")
+        self.assertEqual(teams[0].team_id, 1)
+        self.assertEqual(teams[0].team_name, "MiT")
+        self.assertEqual(teams[1].team_id, 2)
+        self.assertEqual(teams[1].team_name, "Smoked Chicken")
         await client.close()
 
     async def test_get_events_information(self):

@@ -1,28 +1,35 @@
-from dataclasses import field
+from dataclasses import dataclass, field
 
-from pydantic import Field, BaseModel, HttpUrl, AliasChoices
-from pydantic_extra_types.country import CountryAlpha2
+from dataclasses_json import DataClassJsonMixin, Undefined, config, dataclass_json
+from yarl import URL
 
+from .country import CountryCode
 from .rating import Rating
 
 __all__ = ["BaseTeam", "Team", "TeamRank", "TeamComplete", "TeamResult"]
 
 
-class BaseTeam(BaseModel):
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass(frozen=True)
+class BaseTeam(DataClassJsonMixin):
     """Represents a CTF team. Contains only the minimal information."""
 
-    id: int = Field(validation_alias=AliasChoices("team_id", "id"))
-    name: str = Field(validation_alias=AliasChoices("team_name", "name"))
+    team_id: int = field(metadata=config(field_name="id"))
+    team_name: str = field(metadata=config(field_name="name"))
 
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass(frozen=True)
 class Team(BaseTeam):
     """Represents a CTF team"""
 
-    country: CountryAlpha2 | None = Field(None, validation_alias="team_country")
+    team_country: CountryCode | None = None
     academic: bool = False
-    aliases: list[str] = Field(default_factory=list)
+    aliases: list[str] = field(default_factory=list)
 
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass(frozen=True)
 class TeamRank(BaseTeam):
     """Represents a CTF team in the leaderboard"""
 
@@ -32,7 +39,9 @@ class TeamRank(BaseTeam):
     events: int | None = None
 
 
-class TeamResult(BaseModel):
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass(frozen=True)
+class TeamResult(DataClassJsonMixin):
     """Represents a CTF team result"""
 
     team_id: int
@@ -40,11 +49,13 @@ class TeamResult(BaseModel):
     place: int
 
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass(frozen=True)
 class TeamComplete(Team):
     """Represents a CTF team with complete information"""
 
-    primary_alias: str
-    logo: HttpUrl | str | None = None
+    primary_alias: str | None = None
+    logo: URL | str | None = None
     university: str | None = None
-    university_website: HttpUrl | str | None = None
+    university_website: URL | str | None = None
     rating: dict[int, Rating | None] = field(default_factory=dict)

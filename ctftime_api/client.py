@@ -4,10 +4,10 @@ from typing import Any
 
 import httpx
 from httpx import URL, Timeout
-from pydantic_extra_types.country import CountryAlpha2
 
+from ctftime_api.models.country import CountryCode
 from ctftime_api.models.event import Event, EventResult
-from ctftime_api.models.team import TeamRank, Team, TeamComplete
+from ctftime_api.models.team import Team, TeamComplete, TeamRank
 from ctftime_api.models.vote import Vote
 
 __all__ = ["CTFTimeClient"]
@@ -65,10 +65,10 @@ class CTFTimeClient:
         response: dict[str, list[dict]] = await self._get(url, params={"limit": limit})
         teams = response.get(f"{year}", [])
 
-        return [TeamRank.model_validate(team) for team in teams]
+        return [TeamRank.from_dict(team) for team in teams]
 
     async def get_top_team_by_country(
-        self, country: str | CountryAlpha2
+        self, country: str | CountryCode
     ) -> list[TeamRank]:
         """
         Get the top teams in the leaderboard for a specific country.
@@ -78,9 +78,7 @@ class CTFTimeClient:
         :raise httpx.HTTPStatusError: If the response status code is not successful.
         :raise ValueError: If the country is not a two-letter country code or a pycountry Country object.
         """
-        if isinstance(country, CountryAlpha2):
-            country = country
-        elif isinstance(country, str):
+        if isinstance(country, str):
             if len(country) != 2:
                 raise ValueError(
                     "Country must be a two-letter country code or a pycountry Country object."
@@ -89,7 +87,7 @@ class CTFTimeClient:
         url = self._base_url.join("top-by-country/").join(f"{country}/")
         teams: list[dict[str, Any]] = await self._get(url)
 
-        return [TeamRank.model_validate(team) for team in teams]
+        return [TeamRank.from_dict(team) for team in teams]
 
     async def get_events_information(
         self, start: int | datetime, end: int | datetime, limit: int = 10
@@ -118,7 +116,7 @@ class CTFTimeClient:
             url, params={"start": start, "finish": end, "limit": limit}
         )
 
-        return [Event.model_validate(event) for event in events]
+        return [Event.from_dict(event) for event in events]
 
     async def get_event_information(self, event_id: int) -> Event:
         """
@@ -130,7 +128,7 @@ class CTFTimeClient:
         url = self._base_url.join(f"events/{event_id}/")
         event: dict[str, Any] = await self._get(url)
 
-        return Event.model_validate(event)
+        return Event.from_dict(event)
 
     async def get_teams_information(
         self, limit: int = 100, offset: int = 0
@@ -149,7 +147,7 @@ class CTFTimeClient:
         )
         teams: list[dict[str, Any]] = response.get("results", [])
 
-        return [Team.model_validate(team) for team in teams]
+        return [Team.from_dict(team) for team in teams]
 
     async def get_team_information(self, team_id: int) -> TeamComplete:
         """
@@ -161,7 +159,7 @@ class CTFTimeClient:
         url = self._base_url.join(f"teams/{team_id}/")
         team: dict[str, Any] = await self._get(url)
 
-        return TeamComplete.model_validate(team)
+        return TeamComplete.from_dict(team)
 
     async def get_event_results(
         self, year: int | None = None
@@ -181,7 +179,7 @@ class CTFTimeClient:
         event: dict[str, dict] = await self._get(url)
 
         return {
-            int(ctf_id): EventResult(**result, ctf_id=int(ctf_id))
+            int(ctf_id): EventResult.from_dict(result)
             for ctf_id, result in event.items()
         }
 
@@ -206,4 +204,4 @@ class CTFTimeClient:
         url = self._base_url.join(f"votes/{year}/")
         votes: list[dict] = await self._get(url, timeout=timeout)
 
-        return [Vote(**vote) for vote in votes]
+        return [Vote.from_dict(vote) for vote in votes]
