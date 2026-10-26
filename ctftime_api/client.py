@@ -78,11 +78,10 @@ class CTFTimeClient:
         :raise httpx.HTTPStatusError: If the response status code is not successful.
         :raise ValueError: If the country is not a two-letter country code or a pycountry Country object.
         """
-        if isinstance(country, str):
-            if len(country) != 2:
-                raise ValueError(
-                    "Country must be a two-letter country code or a pycountry Country object."
-                )
+        if isinstance(country, str) and len(country) != 2:
+            raise ValueError(
+                "Country must be a two-letter country code or a pycountry Country object."
+            )
 
         url = self._base_url.join("top-by-country/").join(f"{country}/")
         teams: list[dict[str, Any]] = await self._get(url)
@@ -184,7 +183,7 @@ class CTFTimeClient:
         }
 
     async def get_votes_per_year(
-        self, year: int | None, timeout: Timeout | int | float | None = None
+        self, year: int | None, timeout: Timeout | float | None = None
     ) -> list[Vote]:
         """
         Get the votes for a specific year.

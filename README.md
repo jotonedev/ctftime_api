@@ -29,12 +29,14 @@ Create a client to interact with the CTFTime API. For example, to get the top te
 import asyncio
 from ctftime_api.client import CTFTimeClient
 
+
 async def main():
     client = CTFTimeClient()
     top_teams = await client.get_top_teams_per_year()
     for team in top_teams:
         print(f"{team.name} (ID: {team.id}) - Points: {team.points}")
     await client.close()
+
 
 asyncio.run(main())
 ```

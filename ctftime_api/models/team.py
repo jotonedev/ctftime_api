@@ -6,7 +6,7 @@ from yarl import URL
 from .country import CountryCode
 from .rating import Rating
 
-__all__ = ["BaseTeam", "Team", "TeamRank", "TeamComplete", "TeamResult"]
+__all__ = ["BaseTeam", "Team", "TeamComplete", "TeamRank", "TeamResult"]
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
